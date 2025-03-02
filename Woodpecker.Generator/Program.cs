@@ -36,7 +36,7 @@ internal static class Program
         <html>
 
         <head>  
-            <link rel="stylesheet" type="text/css" href="./woodpecker.css" media="screen">
+            <link rel="stylesheet" type="text/css" href="./index.css" media="screen">
         </head>
 
         <body>
@@ -63,13 +63,13 @@ internal static class Program
         stringBuilder.Append("""
             </div>
 
-            <script src="./woodpecker.js"></script>
+            <script src="./index.js"></script>
         </body>
 
         </html>
         """);
 
-        File.WriteAllText("../docs/woodpecker.html", stringBuilder.ToString());
+        File.WriteAllText("../docs/index.html", stringBuilder.ToString());
     }
 
     private static int ReadIntegerInput(int? defaultValue = default)
