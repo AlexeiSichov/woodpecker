@@ -69,7 +69,7 @@ internal static class Program
         </html>
         """);
 
-        File.WriteAllText("./woodpecker.html", stringBuilder.ToString());
+        File.WriteAllText("./docs/woodpecker.html", stringBuilder.ToString());
     }
 
     private static int ReadIntegerInput(int? defaultValue = default)
