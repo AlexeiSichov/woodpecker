@@ -35,8 +35,10 @@ internal static class Program
         <!DOCTYPE html>
         <html>
 
-        <head>  
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" type="text/css" href="./index.css" media="screen">
+            <script src="https://kit.fontawesome.com/dbd722dd21.js" crossorigin="anonymous"></script>
         </head>
 
         <body>
@@ -51,8 +53,9 @@ internal static class Program
                     <div>
                         <a href="https://lichess.org/training/{{puzzle.PuzzleId}}" class="puzzle" target="_blank" rel="noopener noreferrer">{{puzzleNumber}}</a>
                         <div class="button-container">
-                            <button type="button" class="action-button" onclick="markAsCompleted(event, {{puzzleNumber}})">✔️</button>
-                            <button type="button" class="action-button" onclick="markAsUncompleted(event, {{puzzleNumber}})">❌</button>
+                            <button type="button" class="action-button fa-solid fa-thumbs-up" onclick="markAsSolved(event, {{puzzleNumber}})"></button>
+                            <button type="button" class="action-button fa-solid fa-thumbs-down" onclick="markAsFailed(event, {{puzzleNumber}})"></button>
+                            <button type="button" class="action-button fa-solid fa-xmark" onclick="markAsUnsolved(event, {{puzzleNumber}})"></button>
                         </div>
                     </div>
             """);

@@ -8,7 +8,7 @@ html, body {
     grid-template-columns: repeat(auto-fill, 100px);
     gap: 10px;
     padding: 20px;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
 .puzzle {
@@ -32,8 +32,12 @@ html, body {
     background-color: #e55c55;
 }
 
-.completed {
+.solved {
     background-color: #4caf50 !important;
+}
+
+.failed {
+    background-color: #e5b755 !important;
 }
 
 .button-container {
@@ -50,10 +54,52 @@ html, body {
     padding: 5px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 30px;
+    font-size: 20px;
     transition: 0.3s;
 }
 
 .action-button:hover {
     background-color: #cacaca;
+}
+
+button.fa-thumbs-up {
+    color: #4caf50;
+}
+
+button.fa-thumbs-down {
+    color: #e5b755;
+}
+
+button.fa-xmark {
+    color: #ff6961;
+}
+
+@media (max-width: 700px) {
+    .puzzle-container {
+        grid-template-columns: repeat(auto-fill, 125px);
+    }
+
+    .puzzle {
+        width: 125px;
+        height: 125px;
+    }
+
+    .action-button {
+        font-size: 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .puzzle-container {
+        grid-template-columns: repeat(auto-fill, 150px);
+    }
+
+    .puzzle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .action-button {
+        font-size: 30px;
+    }
 }
