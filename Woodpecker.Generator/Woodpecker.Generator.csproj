@@ -10,10 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="CSVHelper" Version="33.0.1" />
+    <PackageReference Include="ZstdNet" Version="1.4.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="./Database/**" >
+    <Content Include="./Database/**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

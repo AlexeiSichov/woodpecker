@@ -3,27 +3,41 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using CsvHelper;
+using ZstdNet;
 
 namespace Woodpecker.Generator;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "No localization needed.")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "No SynchronizationContext in a console application.")]
 internal static class Program
 {
     private const int DefaultNumberOfPuzzles = 1000;
+    private const string DatabaseLocalFolder = "Database";
+    private const string DecompressedLichessPuzzleDatabaseFileName = "lichess_db_puzzle.csv";
+    private const string CompressedLichessPuzzleDatabaseFileName = $"{DecompressedLichessPuzzleDatabaseFileName}.zst";
+    private static readonly string _decompressedLichessPuzzleDatabaseFilePath = Path.Combine(DatabaseLocalFolder, DecompressedLichessPuzzleDatabaseFileName);
+    private static readonly Uri _lichessPuzzleDatabaseUrl = new($"https://database.lichess.org/{CompressedLichessPuzzleDatabaseFileName}", UriKind.Absolute);
 
-    public static void Main(string[] _)
+    public static async Task Main(string[] _)
     {
         Console.Write("Minimum rating: ");
         int minRating = ReadIntegerInput();
+
         Console.Write("Maximum rating: ");
         int maxRating = ReadIntegerInput();
+
         Console.Write("Number of puzzles (default is 1000): ");
         int numberOfPuzzles = ReadIntegerInput(defaultValue: DefaultNumberOfPuzzles);
+
+        await DownloadAndDecompressTheDatabase();
+
         Console.WriteLine("Generating...");
 
-        using var reader = new StreamReader("./Database/lichess_db_puzzle.csv");
+        using var reader = new StreamReader(_decompressedLichessPuzzleDatabaseFilePath);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
         var puzzles = csv.GetRecords<LichessPuzzle>()
             .Where(puzzle => puzzle.Rating >= minRating && puzzle.Rating <= maxRating)
@@ -73,7 +87,33 @@ internal static class Program
         </html>
         """);
 
-        File.WriteAllText("../docs/index.html", stringBuilder.ToString());
+        await File.WriteAllTextAsync("../docs/index.html", stringBuilder.ToString());
+        
+        Console.WriteLine("Done.");
+    }
+
+    private static async ValueTask DownloadAndDecompressTheDatabase()
+    {
+        if (File.Exists(_decompressedLichessPuzzleDatabaseFilePath))
+        {
+            Console.WriteLine($"Skipped downloading of the file {_lichessPuzzleDatabaseUrl}.");
+            return;
+        }
+
+        Console.WriteLine($"Downloading and decompressing {_lichessPuzzleDatabaseUrl} to {_decompressedLichessPuzzleDatabaseFilePath}...");
+
+        Directory.CreateDirectory(DatabaseLocalFolder);
+
+        using HttpClient httpClient = new();
+
+        using var response = await httpClient.GetStreamAsync(_lichessPuzzleDatabaseUrl);
+        using var decompressedResponse = new DecompressionStream(response);
+        using (var fileStream = new FileStream(_decompressedLichessPuzzleDatabaseFilePath, FileMode.Create))
+        {
+            await decompressedResponse.CopyToAsync(fileStream);
+        }
+
+        Console.WriteLine("Downloaded and decompressed.");
     }
 
     private static int ReadIntegerInput(int? defaultValue = default)
